@@ -1,0 +1,13 @@
+---
+title: "Code"
+output: html_notebook
+---
+Importing data
+```{r}
+TrackRecords <- read.csv("C:/Users/TemwekaC/OneDrive/Documents/Semester2/Unsupervised Learning/Assignment 1/TrackRecords.csv")
+UN_Statistics <- read.csv("C:/Users/TemwekaC/OneDrive/Documents/Semester2/Unsupervised Learning/Assignment 1/UN_Statistics.csv")
+
+dir.create("data")
+save(TrackRecords,UN_Statistics, file = "data/InitialData.RData")
+```
+
