@@ -11,3 +11,95 @@ dir.create("data")
 save(TrackRecords,UN_Statistics, file = "data/InitialData.RData")
 ```
 
+```{r}
+load("data/InitialData.RData")
+```
+
+## Exploration of the UN Dataset
+```{r}
+head(UN_Statistics)
+dim(UN_Statistics)
+
+row.names(UN_Statistics) <- UN_Statistics[,1]
+UN_Statistics <- UN_Statistics[,-1]
+
+```
+
+```{r}
+plot(UN_Statistics)
+```
+
+
+
+
+
+
+
+
+
+## Task 2
+## About the Dataset
+```{r}
+head(TrackRecords)
+```
+
+
+## Exploration of the Track Dataset
+```{r}
+
+dim(TrackRecords)
+row.names(TrackRecords) <- TrackRecords[,2] #Use the country names as labels for each row
+colnames(TrackRecords)
+TrackRecords <- TrackRecords[,-c(1,2)] #Removing the ID columns, ie, obs and country name
+```
+
+```{r}
+i = 1
+par(mfrow = c(2, 2))
+for (i in 1:7){
+  plot(sort(TrackRecords[,i]), ylab = colnames(TrackRecords)[i])
+}
+
+for (i in 1:7){
+  hist((TrackRecords[,i]), xlab = paste0("Time Taken For ",colnames(TrackRecords)[i]), breaks = 20, main = paste0("Histogram of ", colnames(TrackRecords)[i]))
+}
+
+pairs(TrackRecords)
+
+#Also check for correlation
+boxplot(TrackRecords)
+```
+
+##PCA
+```{r}
+PCA.Track <- princomp(TrackRecords, cor = T, scores = T)
+PCA.Track
+
+PCA.newTrack <- princomp(NewTrackrecord, cor = T, scores = T)
+PCA.newTrack
+```
+
+
+```{r}
+PCA.Track$loadings
+```
+
+```{r}
+head(PCA.Track$scores)
+```
+
+```{r}
+biplot(PCA.Track,scale=0)
+biplot(PCA.newTrack)
+```
+
+```{r}
+Variance<-(PCA.Track$sdev)^2
+max_Var<-round(max(Variance),1)
+Components<-1:7
+Components<-as.integer(Components)
+plot(Components,Variance,main="Scree Plot",xlab="Number of Components",ylab="Variance",type="o",col="blue",ylim=c(0,max_Var),axes=FALSE)
+axis(1,at=1:7)
+axis(2,at=0:6)
+
+```
