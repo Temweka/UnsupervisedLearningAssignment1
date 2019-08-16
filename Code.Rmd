@@ -1,7 +1,10 @@
 ---
-title: "Code"
-output: html_notebook
+title: "Unsupervised Learning Assignment 1"
+author: "Temweka Chirwa (CHRTEM001)"
+date: "16/08/2019"
+output: html_document
 ---
+
 Importing data
 ```{r}
 TrackRecords <- read.csv("C:/Users/TemwekaC/OneDrive/Documents/Semester2/Unsupervised Learning/Assignment 1/TrackRecords.csv")
@@ -26,14 +29,76 @@ UN_Statistics <- UN_Statistics[,-1]
 ```
 
 ```{r}
-plot(UN_Statistics)
+par(mfrow = c(2, 2))
+for (i in 1:5){
+  plot(sort(UN_Statistics[,i]), ylab = colnames(UN_Statistics)[i])
+}
+
+for (i in 1:5){
+  hist((UN_Statistics[,i]), xlab = colnames(UN_Statistics)[i], breaks = 20, main = paste0("Histogram of ", colnames(UN_Statistics)[i]))
+}
+
+pairs(UN_Statistics)
+
+#Also check for correlation
+boxplot(UN_Statistics)
 ```
 
+```{r}
+library(cluster)
+library(MASS)
+library(smacof)
+```
 
+```{r}
+data("eurodist")
+eurodistmatrix = as.matrix(eurodist)
+eurodist2 = eurodistmatrix[c(1,3,7,8,12,14,17:21), c(1,3,7,8,12,14,17:21)]
+eurodist2matrix = as.dist(eurodist2)
+```
 
+```{r}
+UN_Stat_dist <- dist(scale(UN_Statistics))
+UN_Stat_dist
+```
+```{r}
+UN_dist_daisy <- daisy(scale(UN_Statistics), metric = "euclidean")
+UN_dist_daisy
+```
 
+```{r}
+UN.complete.euc <- hclust(UN_Stat_dist,method="complete")
+plot(UN.complete.euc)
+UN_clusvec <- cutree(UN.complete.euc, k=5)
+```
 
+```{r}
+UN_Eucledian <- cmdscale(UN_Stat_dist)
+# create empty plot
+plot (UN_Eucledian)
+UN_Eucledian 
+#ensure you list enough colours for the number of clusters
+colvec <- c("green","gold","blue","red","black", "violet")
+for (i in 1:length(UN_Eucledian[,1]))
+  text (UN_Eucledian[i,1],UN_Eucledian[i,2],rownames(UN_Statistics)[i],col=colvec[UN_clusvec[i]],cex=0.85)
+```
 
+```{r}
+UN_Eucledian1 <- cmdscale(UN_Stat_dist, k =1)
+# create empty plot
+
+plot(1, type="n",xlim=c(-3,4.2), ylim = c(0.5,1.5), xlab = "Euclidean Distance")
+#ensure you list enough colours for the number of clusters
+colvec <- c("green","gold","blue","red","black", "violet")
+for (i in 1:length(UN_Eucledian1[,1]))
+  points(x=UN_Eucledian1[i,1],y=1, col=colvec[UN_clusvec[i]],cex=0.85)
+
+```
+
+```{r}
+UN_Eucledian
+UN_Eucledian1
+```
 
 
 
@@ -54,7 +119,6 @@ TrackRecords <- TrackRecords[,-c(1,2)] #Removing the ID columns, ie, obs and cou
 ```
 
 ```{r}
-i = 1
 par(mfrow = c(2, 2))
 for (i in 1:7){
   plot(sort(TrackRecords[,i]), ylab = colnames(TrackRecords)[i])
